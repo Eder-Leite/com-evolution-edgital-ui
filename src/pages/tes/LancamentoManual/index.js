@@ -434,10 +434,10 @@ function LancamentoFinanceiro() {
                     <Button
                         type='button'
                         icon='pi pi-cog'
-                        tooltip='Gerar título'
+                        tooltip='Fechar Lançamento'
                         style={{ marginRight: '.5em' }}
                         tooltipOptions={{ position: 'left' }}
-                        onClick={() => buscarPorId(rowData.id)}
+                        onClick={() => fecharLancamento(rowData.id)}
                     />
                     <Button
                         type='button'
@@ -461,13 +461,13 @@ function LancamentoFinanceiro() {
         } else {
             return (
                 <Button
-                type='button'
-                icon='pi pi-ban'
-                tooltip='Cancelar títilo'
-                className='p-button-danger'
-                tooltipOptions={{ position: 'left' }}
-                onClick={() => confirmacaoExcluir(rowData.id)}
-            />
+                    type='button'
+                    icon='pi pi-ban'
+                    tooltip='Abrir Lançamento'
+                    className='p-button-danger'
+                    tooltipOptions={{ position: 'left' }}
+                    onClick={() => abrirLancamento(rowData.id)}
+                />
             );
         }
     }
@@ -684,6 +684,44 @@ function LancamentoFinanceiro() {
     function cancelarRateio() {
         setIndex(null);
         setRateio(new SchemaRateioLancamentoManual());
+    }
+
+    async function abrirLancamento(id) {
+        Loading.onShow();
+
+        await Api({
+            method: 'put',
+            url: `${url}/${id}/abrir`,
+        }).then(resp => {
+            Loading.onHide();
+            pesquisar();
+            Toasty.success('Sucesso!', 'Lançamento Financeiro Manual aberto com sucesso!');
+        })
+            .catch(error => {
+                Loading.onHide();
+                console.log(error);
+                Toasty.error('Erro!', 'Erro ao processar esse registro!');
+            });
+
+    }
+
+    async function fecharLancamento(id) {
+        Loading.onShow();
+
+        await Api({
+            method: 'put',
+            url: `${url}/${id}/fechar`,
+        }).then(resp => {
+            Loading.onHide();
+            pesquisar();
+            Toasty.success('Sucesso!', 'Lançamento Financeiro Manual fechado com sucesso!');
+        })
+            .catch(error => {
+                Loading.onHide();
+                console.log(error);
+                Toasty.error('Erro!', 'Erro ao processar esse registro!');
+            });
+
     }
 
     function validaFormularioParcela() {
